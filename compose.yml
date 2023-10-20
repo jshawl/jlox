@@ -1,0 +1,6 @@
+services:
+  java:
+    image: eclipse-temurin:17
+    working_dir: /app
+    volumes:
+      - ./com:/app/com
