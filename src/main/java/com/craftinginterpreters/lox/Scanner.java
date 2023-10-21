@@ -14,6 +14,7 @@ class Scanner {
   private int start = 0;
   private int current = 0;
   private int line = 1;
+  private int comment = 0;
   private static final Map<String, TokenType> keywords;
 
   static {
@@ -101,11 +102,19 @@ class Scanner {
           // A comment goes until the end of the line.
           while (peek() != '\n' && !isAtEnd()) advance();
         } else if (match('*')) {
+          comment++;
           while (!isAtEnd()) {
             if (peek() == '\n') line++;
+            if (peek() == '/' && peekNext() == '*') {
+              comment++;
+              current += 2;
+            }
             if (peek() == '*' && peekNext() == '/') {
+              comment--;
               current += 2; // * + /
-              break;
+              if (comment == 0) {
+                break;
+              }
             }
             advance();
           }
