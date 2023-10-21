@@ -10,7 +10,7 @@ public class GenerateAst {
   public static void main(String[] args) throws IOException {
     if (args.length != 1) {
       System.err.println(
-        "Usage: java com.craftinginterpreters.tool.GenerateAst 'com/craftinginterpreters/lox/'"
+        "Usage: java -cp target/lox-1.0-SNAPSHOT.jar com.craftinginterpreters.tool.GenerateAst 'src/main/java/com/craftinginterpreters/lox/'"
       );
       System.exit(64);
     }
@@ -40,13 +40,41 @@ public class GenerateAst {
     writer.println("import java.util.List;");
     writer.println();
     writer.println("abstract class " + baseName + " {");
+    defineVisitor(writer, baseName, types);
     for (String type : types) {
       String className = type.split(":")[0].trim();
       String fields = type.split(":")[1].trim();
       defineType(writer, baseName, className, fields);
     }
+    // The base accept() method.
+    writer.println();
+    writer.println("  abstract <R> R accept(Visitor<R> visitor);");
     writer.println("}");
     writer.close();
+  }
+
+  private static void defineVisitor(
+    PrintWriter writer,
+    String baseName,
+    List<String> types
+  ) {
+    writer.println("  interface Visitor<R> {");
+
+    for (String type : types) {
+      String typeName = type.split(":")[0].trim();
+      writer.println(
+        "    R visit" +
+        typeName +
+        baseName +
+        "(" +
+        typeName +
+        " " +
+        baseName.toLowerCase() +
+        ");"
+      );
+    }
+
+    writer.println("  }");
   }
 
   private static void defineType(
@@ -69,6 +97,15 @@ public class GenerateAst {
       writer.println("      this." + name + " = " + name + ";");
     }
 
+    writer.println("    }");
+
+    // Visitor pattern.
+    writer.println();
+    writer.println("    @Override");
+    writer.println("    <R> R accept(Visitor<R> visitor) {");
+    writer.println(
+      "      return visitor.visit" + className + baseName + "(this);"
+    );
     writer.println("    }");
 
     // Fields.
