@@ -1,5 +1,7 @@
 # jlox
 
+This repository implements `jlox` from [Crafting Interpreters](https://craftinginterpreters.com/).
+
 ## Start the container
 
 ```
