@@ -9,11 +9,11 @@ docker compose run java bash
 ## Compile
 
 ```
-javac com/craftinginterpreters/lox/*.java
+mvn compile
 ```
 
 ## Execute
 
 ```
-java com.craftinginterpreters.lox.Lox
+java -cp target/lox-1.0-SNAPSHOT.jar com.craftinginterpreters.lox.Lox
 ```

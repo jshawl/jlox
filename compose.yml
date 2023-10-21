@@ -1,6 +1,9 @@
 services:
   java:
-    image: eclipse-temurin:17
+    image: maven:3-eclipse-temurin-21
     working_dir: /app
     volumes:
-      - ./com:/app/com
+      - ./pom.xml:/app/pom.xml
+      - ./src:/app/src
+      - ./target:/app/target
+      - ./.m2:/root/.m2
